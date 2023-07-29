@@ -2,14 +2,39 @@ package lib
 
 import (
 	"errors"
+	"reflect"
+	"unsafe"
 
 	"github.com/veandco/go-sdl2/sdl"
 )
+
+var (
+	BLOCK = reflect.TypeOf(Color(0)).Size()
+)
+
+type Color = uint32
 
 type Graphics struct {
 	Renderer *sdl.Renderer
 	Texture  *sdl.Texture
 	Window   *sdl.Window
+	Width    int32
+	Height   int32
+
+	pixels []Color
+}
+
+func (g Graphics) Render() {
+	g.Renderer.Clear()
+	g.Texture.Update(nil, unsafe.Pointer(&g.pixels[0]), int(BLOCK * uintptr(g.Width)))
+	g.Renderer.Copy(g.Texture, nil, nil)
+	g.Renderer.Present()
+}
+
+func (g Graphics) Clear(color Color) {
+	for i := 0; i < len(g.pixels); i++ {
+		g.pixels[i] = color
+	}
 }
 
 func (g Graphics) Destroy() {
@@ -48,5 +73,8 @@ func NewGraphics(width int32, height int32) (*Graphics, error) {
 		Renderer: renderer,
 		Texture:  texture,
 		Window:   window,
+		Width:    width,
+		Height:   height,
+		pixels:   make([]Color, width*height),
 	}, nil
 }

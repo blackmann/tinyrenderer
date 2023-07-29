@@ -15,5 +15,5 @@ func main() {
 	}
 
 	defer g.Destroy()
-	lib.NewApp(g).Run()
+	lib.NewApp(g, 60).Run()
 }
