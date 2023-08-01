@@ -21,6 +21,8 @@ func (app App) Run() error {
 			running = false
 		}
 
+		app.Update()
+
 		interval := 1000 / int64(app.fps)
 
 		tick := sdl.GetTicks64()
@@ -37,6 +39,13 @@ func (app App) Run() error {
 	}
 
 	return nil
+}
+
+func (app App) Update() {
+	app.g.Line(10, 10, 100, 80, White)
+	app.g.Line(100, 500, 110, 90, Red)
+	app.g.Line(300, 10, 10, 500, Green)
+	app.g.Line(500, 10,100, 10,  Blue)
 }
 
 func (app App) handleKeyInput() error {

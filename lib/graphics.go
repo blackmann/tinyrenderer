@@ -2,6 +2,7 @@ package lib
 
 import (
 	"errors"
+	"math"
 	"reflect"
 	"unsafe"
 
@@ -26,7 +27,7 @@ type Graphics struct {
 
 func (g Graphics) Render() {
 	g.Renderer.Clear()
-	g.Texture.Update(nil, unsafe.Pointer(&g.pixels[0]), int(BLOCK * uintptr(g.Width)))
+	g.Texture.Update(nil, unsafe.Pointer(&g.pixels[0]), int(BLOCK*uintptr(g.Width)))
 	g.Renderer.Copy(g.Texture, nil, nil)
 	g.Renderer.Present()
 }
@@ -35,6 +36,68 @@ func (g Graphics) Clear(color Color) {
 	for i := 0; i < len(g.pixels); i++ {
 		g.pixels[i] = color
 	}
+}
+
+func (g Graphics) PutPixel(x int32, y int32, color Color) {
+	g.pixels[g.Width*y+x] = color
+}
+
+func (g Graphics) Line(x1, y1, x2, y2 int32, color Color) {
+	// Adapted from https://www.ercankoclar.com/wp-content/uploads/2016/12/Bresenhams-Algorithm.pdf
+	dy := math.Abs(float64(y2 - y1))
+	dx := math.Abs(float64(x2 - x1))
+	steep := dy > dx
+
+	if steep {
+		// we use y as the driving axis
+		if y2 < y1 {
+			x1, y1, x2, y2 = x2, y2, x1, y1
+		}
+
+		m := dx / dy
+		e := m - 1
+		x := x1
+
+		var d int32 = 1
+		if x2 < x1 {
+			d = -1
+		}
+
+		for y := y1; y <= y2; y++ {
+			g.PutPixel(x, y, color)
+			if e >= 0 {
+				x += d
+				e -= 1
+			}
+
+			e += m
+		}
+
+	} else {
+		if x2 < x1 {
+			x1, y1, x2, y2 = x2, y2, x1, y1
+		}
+
+		m := dy / dx
+		e := m - 1
+		y := y1
+
+		var d int32 = 1
+		if y2 < y1 {
+			d = -1
+		}
+
+		for x := x1; x <= x2; x++ {
+			g.PutPixel(x, y, color)
+			if e >= 0 {
+				y += d
+				e -= 1
+			}
+
+			e += m
+		}
+	}
+
 }
 
 func (g Graphics) Destroy() {
