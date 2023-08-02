@@ -11,10 +11,29 @@ type App struct {
 	fps uint8
 
 	lastRenderTime uint64
+	models         []*Model
+}
+
+func (app *App) init() {
+	model, err := LoadModel("assets/holzwagen.obj")
+	if err != nil {
+		app.Clean()
+		panic(err)
+	}
+
+	app.models = append(app.models, model)
+}
+
+func (app App) Clean() {
+	app.g.Destroy()
 }
 
 func (app App) Run() error {
+	app.init()
+
 	running := true
+	defer app.Clean()
+
 	for running {
 		app.g.Clear(0x222222ff)
 		if err := app.handleKeyInput(); err != nil {
@@ -42,10 +61,19 @@ func (app App) Run() error {
 }
 
 func (app App) Update() {
-	app.g.Line(10, 10, 100, 79, White)
-	app.g.Line(100, 500, 110, 90, Red)
-	app.g.Line(300, 10, 10, 500, Green)
-	app.g.Line(500, 10,100, 10,  Blue)
+	translate := Vector3{X: 400, Y: 300}
+
+	for _, model := range app.models {
+		for _, object := range model.Objects {
+			for _, face := range object.Faces {
+				for i := 0; i < len(face)-1; i++ {
+					vertex1 := model.Vertices[face[i]-1].Add(translate)
+					vertex2 := model.Vertices[face[(i+1)]-1].Add(translate)
+					app.g.Line(int32(vertex1.X), int32(vertex1.Y), int32(vertex2.X), int32(vertex2.Y), White)
+				}
+			}
+		}
+	}
 }
 
 func (app App) handleKeyInput() error {

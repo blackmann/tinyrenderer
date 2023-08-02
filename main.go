@@ -4,8 +4,8 @@ import (
 	"github.com/blackmann/tinyrenderer/lib"
 )
 
-// [ ] Set up SDL
-// [ ] Draw line
+// [x] Set up SDL
+// [x] Draw line
 // [ ] Implement model
 func main() {
 	var g *lib.Graphics
