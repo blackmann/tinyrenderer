@@ -42,7 +42,7 @@ func (app App) Run() error {
 }
 
 func (app App) Update() {
-	app.g.Line(10, 10, 100, 80, White)
+	app.g.Line(10, 10, 100, 79, White)
 	app.g.Line(100, 500, 110, 90, Red)
 	app.g.Line(300, 10, 10, 500, Green)
 	app.g.Line(500, 10,100, 10,  Blue)

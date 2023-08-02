@@ -39,6 +39,9 @@ func (g Graphics) Clear(color Color) {
 }
 
 func (g Graphics) PutPixel(x int32, y int32, color Color) {
+	if x < 0 || y < 0 || x >= g.Width || y >= g.Height {
+		return
+	}
 	g.pixels[g.Width*y+x] = color
 }
 
