@@ -111,6 +111,7 @@ func (g Graphics) Line(p1, p2 Vector3, color Color) {
 
 }
 
+// Reference: https://www.youtube.com/watch?v=HYAgJN3x4GA
 func pointInTriangle(A, B, C, point Vector2) bool {
 	s1 := C.Y - A.Y
 	s2 := C.X - A.X
