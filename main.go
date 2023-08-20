@@ -6,7 +6,7 @@ import (
 
 // [x] Set up SDL
 // [x] Draw line
-// [ ] Implement model
+// [x] Implement model
 func main() {
 	var g *lib.Graphics
 	g, err := lib.NewGraphics(800, 600)

@@ -15,7 +15,7 @@ type App struct {
 }
 
 func (app *App) init() {
-	model, err := LoadModel("assets/holzwagen.obj")
+	model, err := LoadModel("assets/barbarian.obj")
 	if err != nil {
 		app.Clean()
 		panic(err)
@@ -61,16 +61,15 @@ func (app App) Run() error {
 }
 
 func (app App) Update() {
-	translate := Vector3{X: 400, Y: 300}
+	translate := Vector3{X: 400, Y: 550}
 
 	for _, model := range app.models {
 		for _, object := range model.Objects {
 			for _, face := range object.Faces {
-				for i := 0; i < len(face)-1; i++ {
-					vertex1 := model.Vertices[face[i]-1].Add(translate)
-					vertex2 := model.Vertices[face[(i+1)]-1].Add(translate)
-					app.g.Line(int32(vertex1.X), int32(vertex1.Y), int32(vertex2.X), int32(vertex2.Y), White)
-				}
+				p1 := model.Vertices[face[0] - 1].Add(translate)
+				p2 := model.Vertices[face[1] - 1].Add(translate)
+				p3 := model.Vertices[face[2] - 1].Add(translate)
+				app.g.Triangle(p1, p2, p3, White)
 			}
 		}
 	}
